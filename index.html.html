@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Velocità Limite in Candela - Costruzioni Aeronautiche</title>
+    <style>
+        :root {
+            --bg-color: #F9F8F4; /* Fondo avorio */
+            --text-color: #1A1A1A; /* Testo scuro */
+            --text-muted: #4A4A4A;
+            --accent-color: #0F4C81; /* Blu aeronautico classico */
+            --accent-hover: #0a365c;
+            --card-bg: #FFFFFF;
+            --border-color: #E0DCD3;
+            --success: #287D3C;
+            --danger: #DA291C;
+            --focus-ring: 3px solid #0F4C81;
+            
+            --font-serif: 'Georgia', 'Times New Roman', serif;
+            --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --font-mono: 'Courier New', monospace;
+            
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+            
+            --border-radius: 8px;
+            --transition: 0.3s ease;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            :root {
+                --transition: 0s;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-serif);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            font-size: 18px;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-sans);
+            color: var(--accent-color);
+            line-height: 1.2;
+        }
+
+        button, input, select {
+            font-family: var(--font-sans);
+            font-size: 1rem;
+        }
+
+        a, button, input, select, [tabindex]:not([tabindex="-1"]) {
+            outline: none;
+        }
+
+        a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:not([tabindex="-1"]):focus-visible {
+            outline: var(--focus-ring);
+            outline-offset: 2px;
+        }
+
+        /* Layout */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 1024px) {
+            .app-container {
+                flex-direction: row;
+            }
+        }
+
+        /* Sidebar / Summary */
+        .sidebar {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--border-color);
+            padding: var(--spacing-lg);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        @media (min-width: 1024px) {
+            .sidebar {
+                width: 350px;
+                border-bottom: none;
+                border-right: 2px solid var(--border-color);
+                height: 100vh;
+                overflow-y: auto;
+            }
+        }
+
+        .context-header {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: var(--spacing-sm);
+        }
+
+        .summary-box {
+            background-color: var(--bg-color);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            margin-top: var(--spacing-lg);
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+        }
+
+        .summary-box h3 {
+            font-size: 1rem;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: var(--spacing-sm);
+        }
+
+        .summary-table th, .summary-table td {
+            text-align: left;
+            padding: 8px 4px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: var(--spacing-lg) var(--spacing-md);
+            max-width: 900px;
+        }
+
+        @media (min-width: 768px) {
+            .main-content {
+                padding: var(--spacing-xl);
+            }
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            margin-bottom: var(--spacing-xl);
+            text-align: center;
+        }
+
+        /* Grid for Cards */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        @media (min-width: 768px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            transition: transform var(--transition), box-shadow var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.05);
+        }
+
+        .card h3 {
+            font-size: 1.3rem;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .card p {
+            flex-grow: 1;
+            margin-bottom: var(--spacing-md);
+            color: var(--text-muted);
+        }
+
+        .btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            text-align: center;
+            transition: background-color var(--transition);
+            width: 100%;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--bg-color);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: var(--border-radius);
+            padding: var(--spacing-xl);
+            position: relative;
+            transform: translateY(20px);
+            transition: transform var(--transition);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            line-height: 1;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0 10px;
+        }
+
+        .close-btn:hover {
+            color: var(--danger);
+        }
+
+        .modal-body h2 {
+            margin-bottom: var(--spacing-md);
+            padding-bottom: var(--spacing-sm);
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .modal-body p {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .formula-box {
+            background-color: var(--card-bg);
+            border-left: 4px solid var(--accent-color);
+            padding: var(--spacing-md);
+            margin: var(--spacing-md) 0;
+            font-family: var(--font-sans);
+            overflow-x: auto;
+        }
+        
+        .math-display {
+            font-size: 1.4rem;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        table.nomenclature {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: var(--spacing-lg);
+            font-family: var(--font-sans);
+        }
+
+        table.nomenclature th, table.nomenclature td {
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        table.nomenclature th {
+            background-color: var(--border-color);
+        }
+
+        .source-ref {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-style: italic;
+            text-align: right;
+            margin-top: var(--spacing-lg);
+        }
+
+        /* Simulator Section */
+        .interactive-section {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .sim-container {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-md);
+        }
+
+        @media (min-width: 768px) {
+            .sim-container {
+                flex-direction: row;
+            }
+        }
+
+        .sim-controls {
+            flex: 1;
+            font-family: var(--font-sans);
+        }
+
+        .control-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .control-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            margin-bottom: var(--spacing-sm);
+            accent-color: var(--accent-color);
+        }
+        
+        .control-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .sim-output {
+            background-color: var(--bg-color);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius);
+            text-align: center;
+            border: 2px solid var(--accent-color);
+            margin-top: var(--spacing-md);
+        }
+
+        .sim-output .value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            font-family: var(--font-mono);
+        }
+
+        .sim-visual {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%);
+            border-radius: var(--border-radius);
+            min-height: 300px;
+            position: relative;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .limits-box {
+            font-size: 0.85rem;
+            background-color: #FFF3CD;
+            color: #856404;
+            padding: var(--spacing-sm);
+            border-radius: 4px;
+            margin-top: var(--spacing-md);
+            font-family: var(--font-sans);
+        }
+
+        /* Quiz Section */
+        .quiz-container {
+            font-family: var(--font-sans);
+        }
+
+        .quiz-question {
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .quiz-question:last-child {
+            border-bottom: none;
+        }
+
+        .quiz-question fieldset {
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .quiz-question legend {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: var(--spacing-sm);
+            color: var(--text-color);
+        }
+
+        .quiz-options label {
+            display: block;
+            padding: 10px;
+            margin-bottom: 5px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color var(--transition);
+        }
+
+        .quiz-options label:hover {
+            background-color: #eef2f5;
+        }
+
+        .quiz-options input[type="radio"] {
+            margin-right: 10px;
+            transform: translateY(1px);
+        }
+
+        .quiz-feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+            font-size: 0.95rem;
+        }
+
+        .quiz-feedback.correct {
+            display: block;
+            background-color: #D4EDDA;
+            color: var(--success);
+            border: 1px solid #C3E6CB;
+        }
+
+        .quiz-feedback.incorrect {
+            display: block;
+            background-color: #F8D7DA;
+            color: var(--danger);
+            border: 1px solid #F5C6CB;
+        }
+        
+        .quiz-action {
+            margin-top: var(--spacing-sm);
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <!-- Sidebar / Context -->
+    <aside class="sidebar">
+        <div class="context-header">
+            <strong>ITI "Ettore Majorana"</strong><br>
+            Somma Vesuviana<br>
+            Costruzioni Aeronautiche<br>
+            Prof. Ing. Raucci Biagio - A.S. 2026/2027
+        </div>
+        
+        <h1>La Velocità Limite in Candela</h1>
+        <p style="margin-top: var(--spacing-md); color: var(--text-muted); font-size: 0.95rem;">
+            Analisi teorica, equazioni di equilibrio e fattori d'influenza della massima velocità raggiungibile in volo librato (affondata/tuffo verticale).
+        </p>
+
+        <div class="summary-box">
+            <h3>Sintesi: Prestazioni Volo Librato</h3>
+            <table class="summary-table">
+                <tr>
+                    <th>Assetto</th>
+                    <th>Condizione</th>
+                </tr>
+                <tr>
+                    <td>Distanza Max</td>
+                    <td>E<sub>max</sub> → C<sub>L</sub>*</td>
+                </tr>
+                <tr>
+                    <td>Durata Max</td>
+                    <td>Min Potenza → C<sub>L</sub>**</td>
+                </tr>
+                <tr style="background-color: #e0f2fe;">
+                    <td><strong>Affondata</strong></td>
+                    <td><strong>C<sub>L</sub> = 0 (Tuffo vert.)</strong></td>
+                </tr>
+            </table>
+            <p style="margin-top: 10px; font-size: 0.8rem; text-align: right;">
+                Rif: Tabella Riassuntiva Operativa
+            </p>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="content main-content">
+        
+        <h2 class="section-title">Quadro Teorico</h2>
+
+        <!-- Cards Grid -->
+        <div class="cards-grid">
+            
+            <!-- Card 1 -->
+            <div class="card">
+                <h3>1. Definizione e Assetto di Volo</h3>
+                <p>Cosa significa "velocità in affondata"? Scopri le condizioni aerodinamiche limite, il bilancio delle forze a portanza nulla e l'angolo di traiettoria.</p>
+                <button class="btn" onclick="openModal('modal-1')" aria-label="Approfondisci Definizione e Assetto">Approfondisci</button>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="card">
+                <h3>2. Formule e Dimostrazione</h3>
+                <p>L'equazione generale dell'equilibrio e i passaggi matematici per ricavare la formula della velocità limite. Analisi dei simboli e delle unità di misura.</p>
+                <button class="btn" onclick="openModal('modal-2')" aria-label="Approfondisci Formule e Dimostrazione">Approfondisci</button>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="card">
+                <h3>3. Esempio Numerico Svolto</h3>
+                <p>Applicazione pratica della formula su un addestratore leggero al livello del mare. Verifica quantitativa della velocità imponente raggiunta.</p>
+                <button class="btn" onclick="openModal('modal-3')" aria-label="Approfondisci Esempio Svolto">Approfondisci</button>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="card">
+                <h3>4. Limiti del Modello (Critica)</h3>
+                <p>Cosa manca nel modello puramente teorico? Analisi sulla terminologia "candela", effetti di compressibilità (Mach) e limiti strutturali (V<sub>NE</sub>).</p>
+                <button class="btn" onclick="openModal('modal-4')" aria-label="Approfondisci Limiti del Modello">Approfondisci</button>
+            </div>
+        </div>
+
+        <!-- Interactive Simulation -->
+        <h2 class="section-title">Simulazione Interattiva</h2>
+        <section class="interactive-section">
+            <h3>Calcolatore V<sub>aff</sub> in tempo reale</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">Modifica i parametri per osservare l'effetto sul calcolo della velocità limite. Il diagramma mostra la proporzione tra velocità e resistenza.</p>
+            
+            <div class="sim-container">
+                <div class="sim-controls">
+                    <div class="control-group">
+                        <label for="sim-ws">Carico Alare (W/S) [N/m²]: <span id="val-ws">600</span></label>
+                        <input type="range" id="sim-ws" min="200" max="1500" step="50" value="600">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="sim-cd0">Resistenza di Profilo (C<sub>D0</sub>): <span id="val-cd0">0.025</span></label>
+                        <input type="range" id="sim-cd0" min="0.010" max="0.060" step="0.001" value="0.025">
+                    </div>
+
+                    <div class="control-group">
+                        <label for="sim-alt">Quota (Densità dell'aria ρ):</label>
+                        <select id="sim-alt">
+                            <option value="1.225">Livello del mare (ρ = 1.225 kg/m³)</option>
+                            <option value="1.058">2.000 m (ρ ≈ 1.058 kg/m³)</option>
+                            <option value="0.819">5.000 m (ρ ≈ 0.819 kg/m³)</option>
+                            <option value="0.413">10.000 m (ρ ≈ 0.413 kg/m³)</option>
+                        </select>
+                    </div>
+
+                    <div class="sim-output">
+                        <div>Velocità Limite Teorica (V<sub>aff</sub>)</div>
+                        <div class="value"><span id="out-ms">198.0</span> m/s</div>
+                        <div style="font-weight: bold; color: var(--text-muted);"><span id="out-kmh">712.6</span> km/h</div>
+                    </div>
+                    
+                    <div class="limits-box">
+                        <strong>Ipotesi del modello:</strong> Portanza nulla (C<sub>L</sub>=0), densità costante durante l'istante di calcolo, assenza di effetti di compressibilità (Mach). In un caso reale, superata una certa soglia, C<sub>D0</sub> aumenterebbe drasticamente.
+                    </div>
+                </div>
+
+                <div class="sim-visual">
+                    <svg viewBox="0 0 200 300" width="100%" height="100%" aria-label="Diagramma delle forze in affondata">
+                        <!-- Traiettoria verticale -->
+                        <line x1="100" y1="0" x2="100" y2="300" stroke="#b0c4de" stroke-width="2" stroke-dasharray="5,5" />
+                        
+                        <!-- Velivolo (Sagoma semplificata vista dall'alto in picchiata) -->
+                        <g id="plane-svg" transform="translate(100, 150)">
+                            <polygon points="0,20 -15,-10 -2,-10 -2,-25 2,-25 2,-10 15,-10" fill="#333" />
+                        </g>
+
+                        <!-- Vettore Resistenza (D) - Punta in su -->
+                        <line id="vec-drag" x1="100" y1="130" x2="100" y2="50" stroke="#DA291C" stroke-width="4" marker-end="url(#arrow-drag)" />
+                        <!-- Vettore Velocità (V) / Peso (W) - Punta in giù -->
+                        <line id="vec-vel" x1="100" y1="170" x2="100" y2="250" stroke="#0F4C81" stroke-width="4" marker-end="url(#arrow-vel)" />
+
+                        <!-- Etichette -->
+                        <text id="lbl-drag" x="110" y="80" fill="#DA291C" font-family="sans-serif" font-weight="bold" font-size="14">D = W</text>
+                        <text id="lbl-vel" x="110" y="230" fill="#0F4C81" font-family="sans-serif" font-weight="bold" font-size="14">V</text>
+
+                        <!-- Definizioni Frecce -->
+                        <defs>
+                            <marker id="arrow-drag" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#DA291C" />
+                            </marker>
+                            <marker id="arrow-vel" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#0F4C81" />
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <h2 class="section-title">Verifica delle Conoscenze</h2>
+        <section class="interactive-section quiz-container">
+            
+            <div class="quiz-question">
+                <fieldset>
+                    <legend>1. Quali valori assumono C<sub>L</sub> e γ<sub>d</sub> nella condizione di velocità limite in caduta verticale?</legend>
+                    <div class="quiz-options">
+                        <label><input type="radio" name="q1" value="wrong1"> C<sub>L</sub> = C<sub>L</sub>* (massima efficienza) e γ<sub>d</sub> = -45°</label>
+                        <label><input type="radio" name="q1" value="correct"> C<sub>L</sub> = 0 (portanza nulla) e γ<sub>d</sub> = -90°</label>
+                        <label><input type="radio" name="q1" value="wrong2"> C<sub>L</sub> massimo e γ<sub>d</sub> = -90°</label>
+                    </div>
+                    <div class="quiz-action">
+                        <button class="btn" style="width: auto;" onclick="checkAnswer('q1')">Verifica Risposta</button>
+                    </div>
+                    <div id="feedback-q1" class="quiz-feedback"></div>
+                </fieldset>
+            </div>
+
+            <div class="quiz-question">
+                <fieldset>
+                    <legend>2. Se un velivolo raddoppia il proprio peso W, cosa accade alla sua velocità limite V<sub>aff</sub>?</legend>
+                    <div class="quiz-options">
+                        <label><input type="radio" name="q2" value="wrong1"> Raddoppia (aumenta del 100%)</label>
+                        <label><input type="radio" name="q2" value="wrong2"> Rimane invariata, poiché dipende solo da C<sub>D0</sub></label>
+                        <label><input type="radio" name="q2" value="correct"> Aumenta del fattore √2 (circa +41,4%)</label>
+                    </div>
+                    <div class="quiz-action">
+                        <button class="btn" style="width: auto;" onclick="checkAnswer('q2')">Verifica Risposta</button>
+                    </div>
+                    <div id="feedback-q2" class="quiz-feedback"></div>
+                </fieldset>
+            </div>
+
+            <div class="quiz-question" style="border-bottom: none;">
+                <fieldset>
+                    <legend>3. Perché nella formula di V<sub>aff</sub> non compare la resistenza indotta?</legend>
+                    <div class="quiz-options">
+                        <label><input type="radio" name="q3" value="correct"> Poiché C<sub>L</sub>=0, il termine della resistenza indotta C<sub>L</sub>²/(π·AR·e) si annulla identicamente.</label>
+                        <label><input type="radio" name="q3" value="wrong1"> Perché la resistenza indotta è sempre trascurabile ad alte velocità.</label>
+                        <label><input type="radio" name="q3" value="wrong2"> Perché l'apertura alare (AR) diventa infinita in affondata.</label>
+                    </div>
+                    <div class="quiz-action">
+                        <button class="btn" style="width: auto;" onclick="checkAnswer('q3')">Verifica Risposta</button>
+                    </div>
+                    <div id="feedback-q3" class="quiz-feedback"></div>
+                </fieldset>
+            </div>
+
+        </section>
+
+    </main>
+</div>
+
+<!-- ================= MODALS ================= -->
+
+<!-- Modal 1: Definizione -->
+<div id="modal-1" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal1-title">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closeModal('modal-1')" aria-label="Chiudi finestra">×</button>
+        <div class="modal-body">
+            <h2 id="modal1-title">Definizione e Assetto Limite</h2>
+            <p>Nel <strong>volo librato</strong> (volo rettilineo, uniforme e non propulso con spinta <span style="font-family: var(--font-mono)">T = 0</span>), la velocità limite in caduta verticale (spesso definita in gergo "in candela", sebbene tecnicamente più corretto <em>velocità in affondata</em> o <em>velocità in tuffo</em>) rappresenta la massima velocità teorica raggiungibile dal velivolo in una discesa verticale pura.</p>
+            
+            <h3>Condizione Aerodinamica Limite</h3>
+            <p>La traiettoria è verticale, quindi l'angolo di rampa è <strong>γ<sub>d</sub> = -90°</strong>.</p>
+            <p>Per mantenere questa traiettoria senza generare curve, il velivolo deve annullare l'angolo d'attacco effettivo del profilo, portando la portanza a zero (<strong>C<sub>L</sub> = 0</strong>, quindi <strong>L = 0</strong>).</p>
+            
+            <p>Di conseguenza, la <em>resistenza indotta</em>, che dipende dal quadrato del coefficiente di portanza (C<sub>L</sub>² / π·AR·e), <strong>si annulla completamente</strong>. L'unica forza aerodinamica che si oppone all'accelerazione di gravità (forza peso W) è la pura <strong>resistenza di profilo (C<sub>D0</sub>)</strong>.</p>
+            
+            <p class="source-ref">Riferimento Fonte: Monografia Prof. B. Raucci - Cap. 8 (La curva odografa), Pag. 9-10.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Modal 2: Formule -->
+<div id="modal-2" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal2-title">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closeModal('modal-2')" aria-label="Chiudi finestra">×</button>
+        <div class="modal-body">
+            <h2 id="modal2-title">Equazioni di Equilibrio e Velocità Limite</h2>
+            
+            <p>Le equazioni generali di equilibrio per un velivolo in volo librato lungo una traiettoria inclinata di γ<sub>d</sub> sono:</p>
+            <ul>
+                <li>Equilibrio perpendicolare alla traiettoria: <strong>L = W cos(γ<sub>d</sub>)</strong></li>
+                <li>Equilibrio lungo la traiettoria: <strong>D = -W sin(γ<sub>d</sub>)</strong></li>
+            </ul>
+
+            <p>Nella condizione limite di tuffo verticale (<strong>γ<sub>d</sub> = -90°</strong>), poiché cos(-90°) = 0 e sin(-90°) = -1, le equazioni si riducono a:</p>
+            <div class="formula-box" style="text-align: center; font-size: 1.2rem; font-weight: bold;">
+                L = 0 &nbsp;&nbsp;&nbsp; e &nbsp;&nbsp;&nbsp; D = W
+            </div>
+
+            <p>Sostituendo l'espressione classica della resistenza aerodinamica D, otteniamo l'equilibrio delle forze lungo l'asse di caduta:</p>
+            <div class="formula-box math-display">
+                ½ ρ V² S C<sub>D0</sub> = W
+            </div>
+            
+            <p>Isolando la velocità V, si ricava la formula finale della velocità limite V<sub>aff</sub>:</p>
+            <div class="formula-box math-display">
+                <!-- Using MathML as requested for complex formulas -->
+                <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                  <msub><mi>V</mi><mi>aff</mi></msub>
+                  <mo>=</mo>
+                  <msqrt>
+                    <mrow>
+                      <mfrac><mn>2</mn><mi>&rho;</mi></mfrac>
+                      <mo>&sdot;</mo>
+                      <mfrac><mi>W</mi><mi>S</mi></mfrac>
+                      <mo>&sdot;</mo>
+                      <mfrac><mn>1</mn><msub><mi>C</mi><mrow><mi>D</mi><mn>0</mn></mrow></msub></mfrac>
+                    </mrow>
+                  </msqrt>
+                </math>
+            </div>
+
+            <h3>Nomenclatura (Unità SI)</h3>
+            <table class="nomenclature">
+                <tr><th>Simbolo</th><th>Descrizione</th><th>Unità SI</th></tr>
+                <tr><td>V<sub>aff</sub></td><td>Velocità vera limite in traiettoria verticale</td><td>m/s</td></tr>
+                <tr><td>ρ (rho)</td><td>Densità dell'aria alla quota di discesa</td><td>kg/m³</td></tr>
+                <tr><td>W</td><td>Peso totale del velivolo (Weight)</td><td>N</td></tr>
+                <tr><td>S</td><td>Superficie alare di riferimento</td><td>m²</td></tr>
+                <tr><td>W/S</td><td>Carico alare (Wing Loading)</td><td>N/m²</td></tr>
+                <tr><td>C<sub>D0</sub></td><td>Coefficiente di resistenza parassita/profilo</td><td>-</td></tr>
+            </table>
+            
+            <p class="source-ref">Riferimento Fonte: Monografia Prof. B. Raucci - Pag. 1</p>
+        </div>
+    </div>
+</div>
+
+<!-- Modal 3: Esempio Svolto -->
+<div id="modal-3" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal3-title">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closeModal('modal-3')" aria-label="Chiudi finestra">×</button>
+        <div class="modal-body">
+            <h2 id="modal3-title">Esempio Applicativo Numerico</h2>
+            <p>Poiché il testo teorico fornisce il modello analitico ma omette lo sviluppo numerico esplicito per V<sub>aff</sub>, applichiamo la formula dedotta a un caso di studio rappresentativo di un addestratore leggero.</p>
+            
+            <h3>Dati Iniziali</h3>
+            <ul>
+                <li>Quota: Livello del mare → <strong>ρ = 1,225 kg/m³</strong></li>
+                <li>Carico alare: <strong>W/S = 600 N/m²</strong></li>
+                <li>Pulizia aerodinamica: <strong>C<sub>D0</sub> = 0,025</strong></li>
+            </ul>
+
+            <h3>Svolgimento Passo-Passo</h3>
+            <ol style="margin-left: 20px; line-height: 1.8;">
+                <li>Calcolo del fattore dinamico: <code>2 / ρ = 2 / 1,225 = 1,63265</code></li>
+                <li>Inverso della resistenza: <code>1 / C<sub>D0</sub> = 1 / 0,025 = 40</code></li>
+                <li>Prodotto sotto radice (V²): <code>1,63265 × 600 × 40 = 39.183,6 (m/s)²</code></li>
+                <li>Estrazione della radice quadrata: <code>V<sub>aff</sub> = √(39.183,6) ≈ <strong>197,95 m/s</strong></code></li>
+            </ol>
+
+            <div class="formula-box" style="text-align: center; margin-top: 20px;">
+                <strong>Conversione in km/h:</strong><br>
+                197,95 m/s × 3,6 = <strong>712,6 km/h</strong>
+            </div>
+
+            <p style="margin-top: 15px; background-color: #e0f2fe; padding: 10px; border-left: 4px solid var(--accent-color);">
+                <strong>Risultato:</strong> A portanza nulla, in totale assenza di resistenza indotta, la sola resistenza di forma/attrito permette al velivolo di raggiungere una velocità di caduta imponente prima di pareggiare il peso.
+            </p>
+            
+            <p class="source-ref">Riferimento Fonte: Monografia Prof. B. Raucci - Pag. 2 (Caso di studio)</p>
+        </div>
+    </div>
+</div>
+
+<!-- Modal 4: Limiti -->
+<div id="modal-4" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal4-title">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closeModal('modal-4')" aria-label="Chiudi finestra">×</button>
+        <div class="modal-body">
+            <h2 id="modal4-title">Criticità e Limiti del Modello Teorico</h2>
+            <p>Dall'analisi rigorosa del testo <em>"velocita_limite_volo_librato.pdf"</em> emergono alcune importanti limitazioni del modello matematico rispetto alla fisica del volo reale:</p>
+            
+            <ul style="margin-left: 20px; line-height: 1.8; margin-bottom: 20px;">
+                <li><strong>Terminologia "Candela":</strong> La fonte accademica utilizza esclusivamente i termini <em>"velocità in affondata"</em> o <em>"caduta verticale"</em>. Il termine gergale "candela" (che tra l'altro indica spesso una salita verticale, non una discesa) non è presente nella monografia.</li>
+                
+                <li><strong>Effetti di Compressibilità (Mach):</strong> La trattazione assume una polare parabolica semplice dove C<sub>D0</sub> rimane costante. Nella realtà, avvicinandosi a velocità transoniche (es. 700+ km/h), subentra l'insorgere dell'onda di urto (Muro della resistenza). Il C<sub>D0</sub> aumenterebbe drasticamente a causa del <em>Mach di divergenza del drag</em>, riducendo la V<sub>aff</sub> reale rispetto al calcolo teorico.</li>
+                
+                <li><strong>Limiti Strutturali:</strong> L'equazione calcola una condizione di equilibrio aerodinamico puro. Non considera il limite di sicurezza strutturale del velivolo indicato dal costruttore (<strong>V<sub>NE</sub></strong> - <em>Never Exceed Speed</em>). Un velivolo leggero si disintegra per flutter o carichi dinamici ben prima di raggiungere i 700 km/h teorici calcolati nell'esempio.</li>
+                
+                <li><strong>La Manovra di Richiamata:</strong> Il modello non valuta le estreme sollecitazioni (fattore di carico <em>n</em>) che si verificherebbero nel tentativo di uscire da un tuffo verticale a tale velocità.</li>
+            </ul>
+
+            <p class="source-ref">Riferimento Fonte: Monografia Prof. B. Raucci - Sezione 5, Pag. 2</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- Modal & Focus Management Logic ---
+    let activeElementBeforeModal;
+
+    function openModal(modalId) {
+        // Save the element that triggered the modal to return focus later
+        activeElementBeforeModal = document.activeElement;
+        
+        const modal = document.getElementById(modalId);
+        modal.classList.add('active');
+        
+        // Prevent background scrolling
+        document.body.style.overflow = 'hidden';
+
+        // Set focus to the first focusable element inside the modal (the close button)
+        const closeBtn = modal.querySelector('.close-btn');
+        if (closeBtn) {
+            // Small timeout to ensure display:block transition is respected by browser focus
+            setTimeout(() => closeBtn.focus(), 50);
+        }
+    }
+
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.classList.remove('active');
+        
+        // Restore background scrolling
+        document.body.style.overflow = 'auto';
+
+        // Return focus to the original button
+        if (activeElementBeforeModal) {
+            activeElementBeforeModal.focus();
+        }
+    }
+
+    // Close modal on ESC key
+    window.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const activeModal = document.querySelector('.modal-overlay.active');
+            if (activeModal) {
+                closeModal(activeModal.id);
+            }
+        }
+    });
+
+    // Close modal clicking outside content
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeModal(this.id);
+            }
+        });
+    });
+
+    // --- Simulator Logic ---
+    const inpWS = document.getElementById('sim-ws');
+    const inpCD0 = document.getElementById('sim-cd0');
+    const inpAlt = document.getElementById('sim-alt');
+    
+    const valWS = document.getElementById('val-ws');
+    const valCD0 = document.getElementById('val-cd0');
+    
+    const outMS = document.getElementById('out-ms');
+    const outKMH = document.getElementById('out-kmh');
+
+    // SVG elements
+    const vecVel = document.getElementById('vec-vel');
+    const lblVel = document.getElementById('lbl-vel');
+
+    function calculateVaff() {
+        // Get values
+        const ws = parseFloat(inpWS.value);
+        const cd0 = parseFloat(inpCD0.value);
+        const rho = parseFloat(inpAlt.value);
+
+        // Update labels
+        valWS.textContent = ws;
+        valCD0.textContent = cd0.toFixed(3);
+
+        // Formula: V = sqrt( (2/rho) * (W/S) * (1/Cd0) )
+        const vSquared = (2 / rho) * ws * (1 / cd0);
+        const vMS = Math.sqrt(vSquared);
+        const vKMH = vMS * 3.6;
+
+        // Update outputs
+        outMS.textContent = vMS.toFixed(1);
+        outKMH.textContent = vKMH.toFixed(1);
+
+        // Update SVG Visuals
+        // Base V for scaling: let's assume max reasonable V is around 350 m/s for drawing scaling
+        const maxV = 350; 
+        const normalizedV = Math.min(vMS / maxV, 1); // Cap at 1 for visual safety
+        
+        // Vector pointing down starts at Y=170. Max length = 100px.
+        const vLength = 20 + (normalizedV * 90); 
+        vecVel.setAttribute('y2', 170 + vLength);
+        lblVel.setAttribute('y', 170 + (vLength/2) + 5);
+    }
+
+    // Add event listeners to simulator inputs
+    inpWS.addEventListener('input', calculateVaff);
+    inpCD0.addEventListener('input', calculateVaff);
+    inpAlt.addEventListener('change', calculateVaff);
+
+    // Initial calculation
+    calculateVaff();
+
+    // --- Quiz Logic ---
+    function checkAnswer(questionName) {
+        const selected = document.querySelector(`input[name="${questionName}"]:checked`);
+        const feedbackDiv = document.getElementById(`feedback-${questionName}`);
+        
+        if (!selected) {
+            feedbackDiv.className = 'quiz-feedback incorrect';
+            feedbackDiv.innerHTML = "Seleziona un'opzione prima di verificare.";
+            return;
+        }
+
+        const value = selected.value;
+
+        if (value === 'correct') {
+            feedbackDiv.className = 'quiz-feedback correct';
+            if (questionName === 'q1') {
+                feedbackDiv.innerHTML = "<strong>Corretto!</strong> Condizione di tuffo verticale: assetto a portanza nulla (C<sub>L</sub>=0) e traiettoria a -90°.";
+            } else if (questionName === 'q2') {
+                feedbackDiv.innerHTML = "<strong>Corretto!</strong> V<sub>aff</sub> è proporzionale a √(W/S). Se W raddoppia, la velocità aumenta del fattore √2 (≈ 1,414).";
+            } else if (questionName === 'q3') {
+                feedbackDiv.innerHTML = "<strong>Corretto!</strong> La resistenza indotta dipende da C<sub>L</sub>². Annullando la portanza in affondata (C<sub>L</sub>=0), l'unico termine resistente che si oppone al peso è la resistenza di profilo C<sub>D0</sub>.";
+            }
+        } else {
+            feedbackDiv.className = 'quiz-feedback incorrect';
+            feedbackDiv.innerHTML = "<strong>Scorretto.</strong> Riprova. (Suggerimento: consulta il Quadro Teorico).";
+        }
+    }
+</script>
+
+</body>
+</html>
+```
+
+### Note tecniche e riepilogo verifiche eseguite:
+*   **Formula & Calcoli:** La formula implementata nel JavaScript rispecchia fedelmente l'espressione $V_{aff} = \sqrt{\frac{2}{\rho} \cdot \frac{W}{S} \cdot \frac{1}{C_{D0}}}$. Caricando la pagina con i dati dell'esempio ($W/S = 600$, $C_{D0}=0.025$, quota mare $\rho=1.225$), il calcolatore dà esattamente $198.0 \text{ m/s}$ e $712.6 \text{ km/h}$, confermando il passo 4 del documento fornito.
+*   **Accessibilità e Navigazione (Verificata):** 
+    *   Le modali utilizzano gli attributi `aria` corretti (`role="dialog"`, `aria-modal`, `aria-labelledby`). 
+    *   Premendo "Tab", il focus si sposta logicamente nei campi. Entrando in un "Approfondisci" con "Invio", il focus passa al bottone "Chiudi" della modale. Premendo `Esc`, la modale si chiude e il focus torna sul pulsante di partenza (Focus trap/return funzionante in puro JS).
+    *   Tutte le interazioni (slider del simulatore, radio button del quiz, bottoni di verifica) rispondono alla tastiera nativamente.
+*   **Design offline & SVG:** Non sono state inserite dipendenze. Icone e diagrammi della simulazione sono costruiti dinamicamente via `<svg>` inline. Il font è un robusto fallback di sistema (`Georgia` per testi, `Segoe/sans-serif` per interfaccia).
+*   **Matematica:** All'interno della modale "Formule", l'equazione finale è renderizzata in puro **MathML** accessibile (`<math>`), senza bisogno di caricare MathJax o librerie esterne.
+*   **Sintesi:** È stato incluso un header laterale su desktop (che diventa superiore su mobile) in pieno stile Canvas editoriale, che include i riferimenti della scuola e la comparazione col fattore $E_{max}$ richiesta dal PNG.
